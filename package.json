@@ -10,8 +10,12 @@
   "devDependencies": {
     "nodemon": "^2.0.15"
   },
-
   "scripts": {
     "start": "node index",
-    "start:dev": "nodemon index"}
+    "start:dev": "nodemon index"
+  },
+  "dependencies": {
+    "shortid": "^2.2.16",
+    "uuid": "^8.3.2"
+  }
 }

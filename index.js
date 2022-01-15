@@ -1,22 +1,40 @@
-const argv = require("yargs").argv;
+// const nodemon = require("nodemon");
+// const argv = require("yargs").argv;
 
-// TODO: рефакторить
-function invokeAction({ action, id, name, email, phone }) {
+const allFunctions = require("./contacts");
+// console.log(allFunctions);
+
+// // TODO: рефакторить
+
+async function invokeAction({ action, id, name, email, phone }) {
 	switch (action) {
 		case "list":
-			// ...
-			break;
+			const allContacts = await allFunctions.listContacts();
+			console.table(allContacts);
 
 		case "get":
-			// ... id
+			const contactById = await allFunctions.getContactById(id);
+			console.log(contactById);
 			break;
 
 		case "add":
-			// ... name email phone
+			const newContact = await allFunctions.addContact(name, email, phone);
+			console.log(newContact);
+			break;
+
+		case "update":
+			const updateContact = await allFunctions.updateContact(
+				id,
+				name,
+				email,
+				phone
+			);
+			console.log(updateContact);
 			break;
 
 		case "remove":
-			// ... id
+			const removedContact = await allFunctions.removeContact(id);
+			console.log(removedContact);
 			break;
 
 		default:
@@ -24,4 +42,23 @@ function invokeAction({ action, id, name, email, phone }) {
 	}
 }
 
-invokeAction(argv);
+invokeAction({ action: "list" });
+
+// invokeAction({ action: "get", id: "7" });
+
+// invokeAction({
+// 	action: "add",
+// 	name: "Alice Cooper",
+// 	email: "cooper@poison.net",
+// 	phone: "(748) 234-5874",
+// });
+
+// invokeAction({
+// 	action: "update",
+// 	id: "8",
+// 	name: "Linkin Park",
+// 	email: "park@numb.com",
+// 	phone: "(748) 234-2995",
+// });
+
+// invokeAction({ action: "remove", id: "m8hs7FOf1" });

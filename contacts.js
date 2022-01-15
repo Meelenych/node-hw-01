@@ -1,50 +1,66 @@
 const fs = require("fs").promises;
 const path = require("path");
+const shortid = require("shortid");
 
-const contactsPath = path.join(__dirname, "contacts.json");
+const contactsPath = path.join(__dirname, "/db/contacts.json");
+// console.log(contactsPath);
 
-// TODO: задокументировать каждую функцию
-function listContacts() {
-	// ...твой код
+// // TODO: задокументировать каждую функцию
+
+async function listContacts() {
+	const data = await fs.readFile(contactsPath);
+	const contacts = JSON.parse(data);
+	// console.log(contacts);
+	return contacts;
 }
 
-function getContactById(contactId) {
-	// ...твой код
+async function getContactById(contactId) {
+	const contacts = await listContacts();
+	const result = contacts.find((contact) => contact.id === contactId);
+	if (!result) {
+		return null;
+	}
+	// console.log(result);
+	return result;
 }
 
-function removeContact(contactId) {
-	// ...твой код
+async function updateContact(contactId, name, email, phone) {
+	const contacts = await listContacts();
+	const index = contacts.findIndex((contact) => contact.id === contactId);
+	if (index === -1) {
+		return null;
+	}
+	contacts[index] = { id: contacts[index].id, name, email, phone };
+	await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
+	return contacts[index];
 }
 
-function addContact(name, email, phone) {
-	// ...твой код
+async function removeContact(contactId) {
+	const contacts = await listContacts();
+	const index = contacts.findIndex((contact) => contact.id === contactId);
+	if (index === -1) {
+		return null;
+	}
+	const removedContact = contacts[index];
+	contacts.splice(index, 1);
+	await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
+	return removedContact;
 }
 
-// fs.readFile(filename, [options]) - чтение файла
-// fs.writeFile(filename, data, [options]) - запись файла
-// fs.appendFile(filename, data, [options])- добавление в файл
-// fs.rename(oldPath, newPath) - переименование файла.
-// fs.unlink(path, callback) - удаление файла.
+async function addContact(name, email, phone) {
+	const newContact = { id: shortid.generate(), name, email, phone };
+	const contacts = await listContacts();
+	contacts.push(newContact);
+	await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
+	return newContact;
+}
 
-// fs.readFile("readme.txt")
-// 	.then((data) => console.log(data.toString()))
-// 	.catch((err) => console.log(err.message));
+const allFunctions = {
+	listContacts,
+	getContactById,
+	updateContact,
+	removeContact,
+	addContact,
+};
 
-// const fs = require("fs").promises;
-
-// fs.readdir(__dirname)
-// 	.then((files) => {
-// 		return Promise.all(
-// 			files.map(async (filename) => {
-// 				const stats = await fs.stat(filename);
-// 				return {
-// 					Name: filename,
-// 					Size: stats.size,
-// 					Date: stats.mtime,
-// 				};
-// 			})
-// 		);
-// 	})
-// 	.then((result) => console.table(result));
-
-module.exports;
+module.exports = allFunctions;
