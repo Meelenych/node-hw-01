@@ -1,10 +1,13 @@
-// const nodemon = require("nodemon");
-// const argv = require("yargs").argv;
+const { Command } = require("commander");
+const program = new Command();
+program
+	.option("-a, --action <type>", "contacts operation")
+	.option("-i, --id <type>", "contact id")
+	.option("-n, --name <type>", "contact name")
+	.option("-e, --email <type>", "contact email")
+	.option("-p, --phone <type>", "contact phone");
 
 const allFunctions = require("./contacts");
-// console.log(allFunctions);
-
-// // TODO: рефакторить
 
 async function invokeAction({ action, id, name, email, phone }) {
 	switch (action) {
@@ -42,7 +45,7 @@ async function invokeAction({ action, id, name, email, phone }) {
 	}
 }
 
-invokeAction({ action: "list" });
+// invokeAction({ action: "list" });
 
 // invokeAction({ action: "get", id: "7" });
 
@@ -62,3 +65,7 @@ invokeAction({ action: "list" });
 // });
 
 // invokeAction({ action: "remove", id: "m8hs7FOf1" });
+
+program.parse(process.argv);
+const options = program.opts();
+invokeAction(options);
